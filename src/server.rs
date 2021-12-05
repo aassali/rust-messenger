@@ -9,7 +9,6 @@ fn handle_client(mut stream: TcpStream, adresse: &str) {
 
         match stream.read(buf) {
             Ok(received) => {
-                // si on a reçu 0 octet, ça veut dire que le client s'est déconnecté
                 if received < 1 {
                     println!("Client déconnecté: {}", adresse);
                     return;
@@ -17,7 +16,6 @@ fn handle_client(mut stream: TcpStream, adresse: &str) {
                 let mut x = 0;
 
                 for c in buf {
-                    // si on a dépassé le nombre d'octets reçus, inutile de continuer
                     if x >= received {
                         break;
                     }
@@ -25,7 +23,6 @@ fn handle_client(mut stream: TcpStream, adresse: &str) {
                     if *c == '\n' as u8 {
                         println!("message reçu {} : {}",
                             adresse,
-                            // on convertit maintenant notre buffer en String
                             String::from_utf8(msg).unwrap()
                         );
                         stream.write(b"ok\n");
