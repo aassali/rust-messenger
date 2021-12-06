@@ -1,13 +1,23 @@
+#[macro_use] extern crate magic_crypt;
+
 use std::io::{self, ErrorKind, Read, Write};
 use std::net::TcpStream;
 use std::sync::mpsc::{self, TryRecvError};
 use std::thread;
 use std::time::Duration;
+use magic_crypt::MagicCryptTrait;
 
 const LOCAL: &str = "127.0.0.1:6000";
 const MSG_SIZE: usize = 32;
 
+fn encrypt(message: &str) -> String {
+    let mc = new_magic_crypt!("magickey", 256);
+    mc.encrypt_str_to_base64(message)
+}
+
 fn main() {
+    let d = encrypt("blablabla");
+    println!("{}", &d);
     let mut client = TcpStream::connect(LOCAL).expect("Stream failed to connect");
     client.set_nonblocking(true).expect("failed to initiate non-blocking");
 
