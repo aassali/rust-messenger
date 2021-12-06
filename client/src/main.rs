@@ -16,6 +16,11 @@ fn encrypt(message: &str) -> String {
     mc.encrypt_str_to_base64(message)
 }
 
+fn decrypt(message: &str) -> String {
+    let mc = new_magic_crypt!("magickey", 256);
+    mc.decrypt_base64_to_string(&message).unwrap()
+}
+
 struct Client {
     username: String,
     conn: TcpStream,
@@ -43,7 +48,7 @@ fn main() {
         match client.conn.read_exact(&mut buff) {
             Ok(_) => {
                 let msg = buff.into_iter().take_while(|&x| x != 0).collect::<Vec<_>>();
-                println!("message recv : {:?}", str::from_utf8(&msg).unwrap());
+                println!("message recv : {:?}", decrypt(str::from_utf8(&msg).unwrap()));
             },
             Err(ref err) if err.kind() == ErrorKind::WouldBlock => (),
             Err(_) => {
@@ -70,7 +75,7 @@ fn main() {
         let mut buff = String::new();
         io::stdin().read_line(&mut buff).expect("reading from stdin failed");
         let msg = buff.trim().to_string();
-        if msg == ":quit" || tx.send(msg).is_err() {break}
+        if msg == ":quit" || tx.send(encrypt(&msg)).is_err() {break}
     }
     println!("bye bye!");
 

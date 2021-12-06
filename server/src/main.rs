@@ -1,10 +1,7 @@
-#[macro_use] extern crate magic_crypt;
-
 use std::io::{ErrorKind, Read, Write};
 use std::net::TcpListener;
 use std::sync::mpsc;
 use std::thread;
-use magic_crypt::MagicCryptTrait;
 
 const LOCAL: &str = "127.0.0.1:6000";
 const MSG_SIZE: usize = 32;
@@ -13,14 +10,9 @@ fn sleep() {
     thread::sleep(::std::time::Duration::from_millis(100));
 }
 
-fn decrypt(message: &str) -> String {
-    let mc = new_magic_crypt!("magickey", 256);
-    mc.decrypt_base64_to_string(&message).unwrap()
-}
+
 
 fn main() {
-    let d = decrypt("DCf9qY1cLJGydY/p5097wQ==");
-    println!("{}", &d);
     let server = TcpListener::bind(LOCAL).expect("Listener failed to bind");
     server.set_nonblocking(true).expect("failed to initialize non-blocking");
 
